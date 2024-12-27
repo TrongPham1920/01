@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Dịch vụ cho ứng dụng React (Client)
+  react-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"  # Cổng mà ứng dụng React sẽ chạy trên máy chủ host
+    networks:
+      - app-network
+
+  # Dịch vụ cho Node.js (Server)
+  nodejs-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"  # Cổng mà Node.js server sẽ chạy
+    environment:
+      - NODE_ENV=production  # Đặt biến môi trường cho server nếu cần
+    networks:
+      - app-network
+    depends_on:
+      - react-client  # Đảm bảo ứng dụng client sẽ chạy trước nếu cần thiết
+
+networks:
+  app-network:
+    driver: bridge  # Sử dụng mạng bridge để các container có thể giao tiếp với nhau
